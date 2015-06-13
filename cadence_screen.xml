@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFF66"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:minWidth="100dp"
+        android:onClick="hearCadenceAgain"
+        android:text="Hear Again" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/button1"
+        android:layout_marginTop="23dp" >
+
+        <RadioButton
+            android:id="@+id/c1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="ii Chord"
+            android:onClick="CadenceRadioButtonClicked" />
+
+        <RadioButton
+            android:id="@+id/c2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="iii Chord"
+            android:onClick="CadenceRadioButtonClicked" />
+
+        <RadioButton
+            android:id="@+id/c3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IV Chord"
+            android:onClick="CadenceRadioButtonClicked" />
+
+        <RadioButton
+            android:id="@+id/c4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="V Chord"
+            android:onClick="CadenceRadioButtonClicked" />
+
+        <RadioButton
+            android:id="@+id/c5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="vi Chord"
+            android:onClick="CadenceRadioButtonClicked" />
+
+        <RadioButton
+            android:id="@+id/c6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="vii Chord"
+            android:onClick="CadenceRadioButtonClicked" />
+
+        <RadioButton
+            android:id="@+id/c7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="CadenceRadioButtonClicked"
+            android:text="Octave"
+            />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/button1"
+        android:layout_below="@+id/radioGroup1"
+        android:layout_marginTop="24dp"
+        android:minWidth="80dp"
+        android:onClick="see_cadence_answer"
+        android:text="See Answer" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button3"
+        android:layout_alignBottom="@+id/button3"
+        android:layout_alignLeft="@+id/button2"
+        android:layout_alignParentRight="true"
+        android:minWidth="90dp"
+        android:onClick="return_to_main"
+        android:text="Return" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:onClick="newCadence"
+        android:text="New Cadence" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/radioGroup1"
+        android:layout_marginRight="24dp"
+        android:text="Score: 0"
+        android:textSize="20dp" />
+
+</RelativeLayout>

@@ -1,6 +1,8 @@
 package com.amset.eartrainer;
 
 
+import java.util.Arrays;
+
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,15 +20,18 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
-	String difficulty = "Easy";
-	int id;
-	int id2;
-	int counter;
-	String choice1;
-	String choice2;
-	String choice3;
-	String choice4;
+	public String difficulty = "Easy";
+	public int id;
+	public int id2;
+	public int counter;
+	public String [] choices = new String[4];
+
 	static MediaPlayer mediaPlayer = new MediaPlayer();
+	IntervalGame i;
+	ScaleGame s;
+	ChordGame ch;
+	CadenceGame ca;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,162 +84,134 @@ public class MainActivity extends ActionBarActivity {
 
 	/////////////////////////////////Mediaplayer//////////////////////////////////////
 
-	public static void play_media() {
+	public void play_media(String filename) {
 
 		mediaPlayer.setVolume(1f, 1f);
+		
+		if (counter == 1) {
+			mediaPlayer.stop();
+			mediaPlayer.release();
+			counter = 0;
+		}
+		
+		id = this.getResources().getIdentifier(filename, "raw", this.getPackageName());
+		mediaPlayer = MediaPlayer.create(getBaseContext(), id);
 
 		try {  
-			mediaPlayer.start();		        
+			mediaPlayer.start();
+			counter = 1;
+			
 		} catch(Exception f) {
 			f.printStackTrace();
+			Toast toast = Toast.makeText(getBaseContext(), "Can't play media", Toast.LENGTH_SHORT);
+			toast.show();
 		}
 	}
 
 
 	/////////////////////////////Chord Game//////////////////////////////////////////////////////
 
-	public void chord_game(View view) {
+	public void playChordGame(View view) {
 		setContentView(R.layout.chord_game);
 		TextView mytxt=(TextView )findViewById(R.id.textView1);
+		ch = new ChordGame(difficulty);
 		mytxt.setText("Score:  " + "0");
-		choose_chord();
-		counter = 0;
-		Game_Contents.reset_score();
+		
+		setChordText();
+		play_media(ch.correctAnswer);
 	}
 
-	public void choose_chord() {
-		//TextView e = (TextView)findViewById(R.id.show_diff);
-		//e.setText(difficulty);
-
-		choice1 = Game_Contents.choose_chord(difficulty);
-		choice2 = Game_Contents.choose_chord(difficulty);
-		choice3 = Game_Contents.choose_chord(difficulty);
-		choice4 = Game_Contents.choose_chord(difficulty);
-
-		while (choice1 == choice2 || choice1 == choice3 || choice1 == choice4 || 
-				choice2 == choice3 || choice2 == choice4 || choice3 == choice4) {
-			choice2 = Game_Contents.choose_chord(difficulty);
-			choice3 = Game_Contents.choose_chord(difficulty);
-			choice4 = Game_Contents.choose_chord(difficulty);
-		}
-
-
+	public void setChordText() {
+		choices[0] = ch.chord;
+		choices[1] = ch.wrongAnswer1;
+		choices[2] = ch.wrongAnswer2;
+		choices[3] = ch.wrongAnswer3;
+		Arrays.sort(choices);
+		
 		RadioButton a = (RadioButton)findViewById(R.id.choice1);
-		a.setText(choice1);
+		a.setText(choices[0]);
 		RadioButton b = (RadioButton)findViewById(R.id.choice2);
-		b.setText(choice2);
+		b.setText(choices[1]);
 		RadioButton c = (RadioButton)findViewById(R.id.choice3);
-		c.setText(choice3);
+		c.setText(choices[2]);
 		RadioButton d = (RadioButton)findViewById(R.id.choice4);
-		d.setText(choice4);
-
-		String correct_choice = Game_Contents.correct_choice(choice1, choice2, choice3,
-				choice4);
-
-		id = this.getResources().getIdentifier(correct_choice, "raw", this.getPackageName());
-
+		d.setText(choices[3]);
 	}
-
-
-	public void hear_again(View view) {
-		TextView mytxt=(TextView )findViewById(R.id.button2);
-		mytxt.setText("Hear Again");
-		if (counter == 1) {
-			mediaPlayer.stop();
-			mediaPlayer.release();
-		}
-		mediaPlayer = MediaPlayer.create(getBaseContext(), id);
-		counter = 1;
-		play_media();
-	}
-
-	public void onChordButtonClicked(View view) {
-		boolean correct  = Game_Contents.onChordButtonClicked(view, choice1, choice2, choice3, choice4);
-		if (correct == true) {
-			Toast toast = Toast.makeText(getBaseContext(), "correct", Toast.LENGTH_SHORT);
-			toast.show(); }
-		else if (correct == false) {
-			Toast toast2 = Toast.makeText(getBaseContext(), "incorrect" , Toast.LENGTH_SHORT);
-			toast2.show(); 
-		}
-		String str_score = Game_Contents.get_score(correct);
-		TextView mytxt=(TextView ) findViewById(R.id.textView1);
-		mytxt.setText("Score:  " + str_score);
-	}
-
-	public void see_chord_answer(View view) {
-		String answer = Game_Contents.see_answer();
-		Toast.makeText(view.getContext(), answer, 1000).show();
-	}
+	
 
 	public void new_chord(View view) {
-		if (counter == 1) {
-			mediaPlayer.stop();
-		}
-		choose_chord();
+		ch.chooseChord(ch.difficulty);
+		setChordText();
 		hear_again(view);
 	}
 
 
-	//////////////////////////////Interval Game////////////////////////////////////
-	public void interval_game(View view) {
-		setContentView(R.layout.interval_guessing);
+	public void hear_again(View view) {
+		play_media(ch.correctAnswer);
+	}
 
+	public void onChordButtonClicked(View view) {
+		ch.onChordButtonClicked(view, choices[0], choices[1], choices[2], choices[3]);
+		if (ch.isCorrect()) {
+			Toast toast = Toast.makeText(getBaseContext(), "correct", Toast.LENGTH_SHORT);
+			toast.show(); }
+		else {
+			Toast toast2 = Toast.makeText(getBaseContext(), "incorrect" , Toast.LENGTH_SHORT);
+			toast2.show(); 
+		}
+		ch.updateScore(ch.isCorrect());
+		TextView mytxt=(TextView ) findViewById(R.id.textView1);
+		mytxt.setText("Score:  " + ch.displayScore());
+	}
+
+	public void see_chord_answer(View view) {
+		String answer = ch.correctAnswer;
+		Toast.makeText(view.getContext(), answer, 1000).show();
+	}
+
+	//////////////////////////////Interval Game////////////////////////////////////
+	public void playIntervalGame(View view) {
+		setContentView(R.layout.interval_guessing);
 
 		TextView mytxt=(TextView )findViewById(R.id.textView1);
 		mytxt.setText("Score:  " + "0");
-		choose_interval(view);
-		counter = 0;
-		Game_Contents.reset_score();
-	}
 
-	public void choose_interval(View view) {	
-		String interval = Game_Contents.choose_interval();
-		id = this.getResources().getIdentifier(interval, "raw", this.getPackageName());
-
-	}
-
-	public void onHearAgain(View view) {
-		TextView mytxt=(TextView )findViewById(R.id.button1);
-		mytxt.setText("Hear Again");
-
-		if (counter == 1) {
-			mediaPlayer.stop();
-			mediaPlayer.release();
-		}
-		mediaPlayer = MediaPlayer.create(getBaseContext(), id);
-		counter = 1;
-		play_media();
-	}
-
-	public void IntervalRadioButtonClicked(View view) {
-		boolean correct  = Game_Contents.IntervalRadioButtonClicked(view);
-		if (correct == true) {
-			Toast toast = Toast.makeText(getBaseContext(), "correct", Toast.LENGTH_SHORT);
-			toast.show(); }
-		else if (correct == false) {
-			Toast toast2 = Toast.makeText(getBaseContext(), "incorrect" , Toast.LENGTH_SHORT);
-			toast2.show(); }
-		String str_score = Game_Contents.get_score(correct);
-		TextView mytxt=(TextView ) findViewById(R.id.textView1);
-		mytxt.setText("Score:  " + str_score);
-	}
-
-	public void see_interval_answer(View view){
-		String answer = Game_Contents.see_answer();
-		Toast toast = Toast.makeText(getBaseContext(), "Answer is " 
-				+ answer, Toast.LENGTH_SHORT);
-		toast.show(); 
-
+		i = new IntervalGame();
+		play_media(i.correctAnswer);
+		
 	}
 
 	public void newInterval(View view) {
-		if (counter == 1){
-			mediaPlayer.stop();
-		}
-		choose_interval(view);
-		onHearAgain(view);
+		i.chooseInterval();
+		hearAgain(view);
 	}
+
+	public void hearAgain(View view) {
+		play_media(i.correctAnswer);
+	}
+
+	public void IntervalRadioButtonClicked(View view) {
+		i.IntervalRadioButtonClicked(view);
+		if (i.isCorrect()) {
+			Toast toast = Toast.makeText(getBaseContext(), "correct", Toast.LENGTH_SHORT);
+			toast.show(); }
+		else {
+			Toast toast2 = Toast.makeText(getBaseContext(), "incorrect" , Toast.LENGTH_SHORT);
+			toast2.show(); }
+
+		i.updateScore(i.isCorrect());
+		TextView mytxt=(TextView ) findViewById(R.id.textView1);
+		mytxt.setText("Score:  " + i.displayScore());
+	}
+
+	public void seeAnswer(View view){
+		String answer = i.correctAnswer;
+		Toast toast = Toast.makeText(getBaseContext(), "Answer is " 
+				+ answer, Toast.LENGTH_SHORT);
+		toast.show(); 
+	}
+
+	
 
 	////////////////////////////Instrument Game///////////////////////////////////
 
@@ -245,146 +222,113 @@ public class MainActivity extends ActionBarActivity {
 
 	////////////////////////////Cadence Game//////////////////////////////////////
 
-	public void cadence_game(View view){
+	public void playCadenceGame(View view){
 		setContentView(R.layout.cadence_screen);
+		ca = new CadenceGame();
 
 		TextView mytxt=(TextView )findViewById(R.id.textView1);
 		mytxt.setText("Score:  " + "0");
-		choose_cadence(view);
-		counter = 0;
-		Game_Contents.reset_score();
+
+		playCadence();
 	}
+	
+	public void playCadence() {
 
-	public void choose_cadence(View view){	
-		String cadence = Game_Contents.choose_cadence();
-		id = this.getResources().getIdentifier("chord_1", "raw", this.getPackageName());
-		id2 = this.getResources().getIdentifier(cadence, "raw", this.getPackageName());
-
-	}
-
-	public void onHearCadenceAgain(View view) {
-		TextView mytxt=(TextView )findViewById(R.id.button1);
-		mytxt.setText("Hear Again");
-
-		if (counter == 1){
-			mediaPlayer.stop();
-			mediaPlayer.release();
-		}
-		mediaPlayer = MediaPlayer.create(getBaseContext(), id);
-
-		play_media();
+		play_media("chord_1");
 
 		try {
 			Thread.sleep(1500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		play_media(ca.correctAnswer);
 
-		mediaPlayer.stop();
-		mediaPlayer = MediaPlayer.create(getBaseContext(), id2);
-
-		play_media();
-
-		counter = 1;
+	}
+	
+	public void newCadence(View view) {
+		ca.chooseCadence();
+		playCadence();
 	}
 
+	public void hearCadenceAgain(View view){
+		try {
+			playCadence();
+		}
+		catch (Exception e){
+			Toast toast = Toast.makeText(getBaseContext(), "error", Toast.LENGTH_SHORT);
+			toast.show(); 
+		}
+	}
+	
 	public void CadenceRadioButtonClicked(View view) {
-		boolean correct  = Game_Contents.CadenceRadioButtonClicked(view);
-		if (correct == true) {
+		ca.CadenceRadioButtonClicked(view);
+		if (ca.isCorrect()) {
 			Toast toast = Toast.makeText(getBaseContext(), "correct", Toast.LENGTH_SHORT);
 			toast.show(); }
-		else if (correct == false) {
+		else {
 			Toast toast2 = Toast.makeText(getBaseContext(), "incorrect" , Toast.LENGTH_SHORT);
 			toast2.show(); }
-		String str_score = Game_Contents.get_score(correct);
+		ca.updateScore(ca.isCorrect());
+
 		TextView mytxt=(TextView ) findViewById(R.id.textView1);
-		mytxt.setText("Score:  " + str_score);
+		mytxt.setText("Score:  " + ca.displayScore());
 	}
 
 	public void see_cadence_answer(View view){
-		String answer = Game_Contents.see_answer();
 		Toast toast = Toast.makeText(getBaseContext(), "Answer is " 
-				+ answer, Toast.LENGTH_SHORT);
+				+ ca.correctAnswer, Toast.LENGTH_SHORT);
 		toast.show(); 
-
-	}
-
-	public void newCadence(View view) {
-		if (counter == 1){
-			mediaPlayer.stop();
-		}
-		choose_cadence(view);
-		onHearCadenceAgain(view);
 
 	}
 
 	////////////////////////////Scale Game////////////////////////////////////////
 
-	public void scale_game(View view){
+	public void playScaleGame(View view){
 		setContentView(R.layout.scale_guessing);
+		s = new ScaleGame();
 		TextView mytxt=(TextView )findViewById(R.id.textView1);
 		mytxt.setText("Score:  " + "0");
-		choose_scale();
-		counter = 0;
-		Game_Contents.reset_score();
+		play_media(s.correctAnswer);
 	}
-	public void choose_scale(){
-		String scale = Game_Contents.choose_scale();
-		id = this.getResources().getIdentifier(scale, "raw", this.getPackageName());
-
+	public void newScale(){
+		s.chooseScale();
+		play_media(s.correctAnswer);
 	}
 
-
-
-
+	public void hearScaleAgain(View view)  {
+		play_media(s.correctAnswer);
+	}
+	
+	public void newScale(View view) {
+		s.chooseScale();
+		TextView mytxt2=(TextView )findViewById(R.id.textView3);
+		mytxt2.setText("Which Scale was that?");
+		play_media(s.correctAnswer);
+	}
+	
 	public void ScaleRadioButtonClicked(View view){
-		boolean correct = Game_Contents.ScaleRadioButtonClicked(view);
-		if (correct == true) {
+		s.ScaleRadioButtonClicked(view);
+		if (s.isCorrect()) {
 			TextView mytxt=(TextView )findViewById(R.id.textView3);
 			mytxt.setText("Correct!");
 		}
 
-		else if (correct == false) {
+		else {
 			TextView mytxt=(TextView )findViewById(R.id.textView3);
 			mytxt.setText("Sorry, try again.");
 		}
-		String str_score = Game_Contents.get_score(correct);
+		s.updateScore(s.isCorrect());
+		String str_score = s.displayScore();
 		TextView mytxt=(TextView ) findViewById(R.id.textView1);
 		mytxt.setText("Score:  " + str_score);
-
-
 	}
+	
 	public void see_scale_answer(View view){
 		TextView mytxt=(TextView )findViewById(R.id.textView3);
-		String answer = Game_Contents.see_answer();
-		mytxt.setText("Answer is " + answer);
+		mytxt.setText("Answer is " + s.correctAnswer);
 	}
 
-	public void onPlayAgain(View view)  {
-		TextView mytxt=(TextView )findViewById(R.id.button3);
-		mytxt.setText("Hear Again");
-
-		TextView mytxt2=(TextView )findViewById(R.id.textView3);
-		mytxt2.setText("Which Scale was that?");
-		if (counter == 1){
-			mediaPlayer.stop();
-			mediaPlayer.release();
-		}
-		mediaPlayer = MediaPlayer.create(getBaseContext(), id);
-		counter = 1;
-		play_media();
-
-	}
-
-
-	public void onTryAgain(View view) {
-		if (counter == 1){
-			mediaPlayer.stop();
-		}
-		choose_scale();
-		onPlayAgain(view);
-
-	}
 
 
 	////////////////////////////////Settings/////////////////////////////////////////
@@ -395,24 +339,6 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.settings);
 	}
 
-/*
- 	public void set_difficulty1(View view){
-		difficulty = "Easy";
-
-
-	}
-
-	public void set_difficulty2(View view){
-		difficulty = "Medium";
-
-
-	}
-
-	public void set_difficulty3(View view){
-		difficulty = "Hard";
-
-	}
-*/
 	public void change_diff(View view) {
 		// Is the button now checked?
 		boolean checked = ((RadioButton) view).isChecked();
@@ -437,7 +363,9 @@ public class MainActivity extends ActionBarActivity {
 	////////////////////////////Return to Main////////////////////////////////
 
 	public void return_to_main(View view) {
-		mediaPlayer.release();
+		if (counter == 1){
+			mediaPlayer.stop();
+		}
 		setContentView(R.layout.fragment_main);
 	}
 

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#458FFF"
+    android:orientation="vertical" >
+
+    	<Button
+    	    android:id="@+id/button3"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_alignParentBottom="true"
+    	    android:layout_alignParentLeft="true"
+    	    android:layout_marginBottom="176dp"
+    	    android:onClick="see_chord_answer"
+    	    android:text="show answer" />
+
+    	<Button
+    	    android:id="@+id/button4"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_alignBaseline="@+id/button2"
+    	    android:layout_alignBottom="@+id/button2"
+    	    android:layout_alignParentRight="true"
+    	    android:layout_marginRight="13dp"
+    	    android:onClick="new_chord"
+    	    android:minWidth="100dp"
+    	    android:text="New Chord" />
+
+    	<RadioGroup
+    	    android:id="@+id/radioGroup1"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_alignParentLeft="true"
+    	    android:layout_below="@+id/button4"
+    	    android:layout_marginTop="44dp" >
+
+    	    <RadioButton
+    	        android:id="@+id/choice1"
+    	        android:layout_width="wrap_content"
+    	        android:layout_height="wrap_content"
+    	        android:checked="false"
+    	        android:onClick="onChordButtonClicked"
+    	        android:text="Ra" />
+
+    	    <RadioButton
+    	        android:id="@+id/choice2"
+    	        android:layout_width="wrap_content"
+    	        android:layout_height="wrap_content"
+    	        android:onClick="onChordButtonClicked"
+    	        android:text="Ra" />
+
+    	    <RadioButton
+    	        android:id="@+id/choice3"
+    	        android:layout_width="wrap_content"
+    	        android:layout_height="wrap_content"
+    	        android:onClick="onChordButtonClicked"
+    	        android:text="Ra" />
+
+    	    <RadioButton
+    	        android:id="@+id/choice4"
+    	        android:layout_width="wrap_content"
+    	        android:layout_height="wrap_content"
+    	        android:onClick="onChordButtonClicked"
+    	        android:text="Ra" />
+    	</RadioGroup>
+
+    	<Button
+    	    android:id="@+id/button1"
+    	    style="?android:attr/buttonStyleSmall"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_alignLeft="@+id/button4"
+    	    android:layout_alignRight="@+id/button4"
+    	    android:layout_alignTop="@+id/button3"
+    	    android:onClick="return_to_main"
+    	    android:text="return"
+    	    android:textSize="20sp" />
+
+    	<Button
+    	    android:id="@+id/button2"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_alignParentTop="true"
+    	    android:onClick="hear_again"
+    	    android:text="Hear Again"
+    	    android:minWidth="100dp"
+    	    android:textSize="20dp" />
+
+    	<TextView
+    	    android:id="@+id/textView1"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_alignLeft="@+id/button4"
+    	    android:layout_below="@+id/button4"
+    	    android:layout_marginLeft="12dp"
+    	    android:layout_marginTop="20dp"
+    	    android:textSize="20dp"
+    	    android:text="0/0" />
+
+</RelativeLayout>
